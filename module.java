@@ -1,35 +1,45 @@
 package com.adiadita343;
 
 import net.minecraft.client.MinecraftClient;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Module {
     public String name;
     public String category;
     public boolean enabled = false;
+    public boolean opened = false; // Pentru afișare în GUI
+    public List<BooleanSetting> settings = new ArrayList<>();
     protected static MinecraftClient mc = MinecraftClient.getInstance();
 
     public Module(String name, String category) {
         this.name = name;
         this.category = category;
+        // Adăugăm o setare default de test pentru fiecare modul
+        this.settings.add(new BooleanSetting("Active", true));
     }
 
     public void toggle() {
         this.enabled = !this.enabled;
-        if (enabled) onEnable(); else onDisable();
     }
 
-    public void onEnable() {}
-    public void onDisable() {}
     public void onTick() {
-        // Aici vine logica fiecărui modul
         if (enabled && mc.player != null) {
-            doLogic();
+            // Aici poți adăuga logică specifică
         }
     }
+}
 
-    private void doLogic() {
-        // Exemplu de logică automată pentru module de test
-        if (name.contains("Fly")) mc.player.getAbilities().flying = true;
-        if (name.contains("Speed")) mc.player.updateVelocity(0.2f, mc.player.getVelocity());
+class BooleanSetting {
+    public String name;
+    public boolean enabled;
+
+    public BooleanSetting(String name, boolean enabled) {
+        this.name = name;
+        this.enabled = enabled;
+    }
+
+    public void toggle() {
+        this.enabled = !this.enabled;
     }
 }
