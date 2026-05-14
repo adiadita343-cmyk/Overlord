@@ -1,48 +1,55 @@
-package net.overlord.client.setting;
+package com.adiadita343;
 
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
-import java.awt.Color;
 
-// Importurile astea vor merge DOAR dacă fișierele sursă au pachetul declarat
-import net.overlord.client.module.HackModule;
-import net.overlord.client.module.ModuleManager;
-
-public class ClickGuiScreen extends Screen {
-
-    public ClickGuiScreen() {
-        super(Text.literal("Overlord ClickGUI"));
+public class ClickGUI extends Screen {
+    public ClickGUI() {
+        super(Text.literal("Overlord Client"));
     }
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        if (this.client == null) return;
-
         this.renderBackground(context, mouseX, mouseY, delta);
+        int x = 20;
+        String[] cats = {"COMBAT", "MOVEMENT", "VISUAL", "PLAYER", "MISC"};
 
-        int xOffset = 20;
+        for (String cat : cats) {
+            // Desenăm Header-ul categoriei
+            context.fill(x, 20, x + 90, 35, 0xFF222222);
+            context.drawTextWithShadow(textRenderer, cat, x + 5, 24, 0xFFFFFF);
 
-        // Randare Categorii
-        for (HackModule.Category category : HackModule.Category.values()) {
-            context.drawTextWithShadow(this.textRenderer, category.name(), xOffset, 20, Color.ORANGE.getRGB());
-
-            int yOffset = 40;
-            // Randare Module
-            for (HackModule module : ModuleManager.getModules()) {
-                if (module.getCategory() == category) {
-                    int color = module.isEnabled() ? Color.GREEN.getRGB() : Color.WHITE.getRGB();
-                    context.drawTextWithShadow(this.textRenderer, module.getName(), xOffset, yOffset, color);
-                    yOffset += 12;
+            int y = 40;
+            // Afișăm primele 25 de module din categorie să nu aglomerăm ecranul
+            for (Module m : ModuleManager.getModulesByCategory(cat).stream().limit(25).toList()) {
+                int bgColor = m.enabled ? 0xFF00AA00 : 0xFF333333;
+                context.fill(x, y, x + 90, y + 12, bgColor);
+                context.drawTextWithShadow(textRenderer, m.name, x + 5, y + 2, 0xFFFFFF);
+                
+                // Dacă modulul e "deschis" (Right Click), arătăm setările
+                if (m.opened) {
+                    for (BooleanSetting s : m.settings) {
+                        y += 12;
+                        context.fill(x + 5, y, x + 90, y + 10, 0xFF555555);
+                        String status = s.enabled ? "[ON]" : "[OFF]";
+                        context.drawTextWithShadow(textRenderer, s.name + " " + status, x + 10, y + 1, 0xAAAAAA);
+                    }
                 }
+                y += 14;
             }
-            xOffset += 100;
+            x += 100;
         }
         super.render(context, mouseX, mouseY, delta);
     }
 
     @Override
-    public boolean shouldPause() {
-        return false;
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        // Aici va veni logica de calculat unde ai dat click exact pentru Toggle
+        // Momentan, doar închidem meniul cu ESC sau îl lăsăm deschis.
+        return super.mouseClicked(mouseX, mouseY, button);
     }
+
+    @Override
+    public boolean shouldPause() { return false; }
 }
