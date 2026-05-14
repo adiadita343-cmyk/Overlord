@@ -1,30 +1,20 @@
 name: Build Mod
-on: [push, pull_request]
+on: [push]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
+      - uses: actions/checkout@v4
       - name: Setup Java 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'microsoft'
-
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: 8.8
-          cache-disabled: true
-
-      - name: Build with Gradle
+          cache-disabled: true # Foarte important pentru a evita eroarea 400 de server
+      - name: Build
         run: chmod +x gradlew && ./gradlew build
-
-      - name: Upload JAR
-        uses: actions/upload-artifact@v4
-        with:
-          name: Overlord-Mod-JAR
-          path: "**/build/libs/*.jar"
