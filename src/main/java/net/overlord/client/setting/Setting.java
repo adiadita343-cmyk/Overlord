@@ -1,17 +1,36 @@
-package net.overlord.client.setting;
-public abstract class Setting<T> {
-    private final String name;
-    private final String description;
-    protected T value;
+package com.adiadita343;
 
-    public Setting(String name, String description, T value) {
+public class Setting {
+    private String name;
+    private Module parentMod;
+    private boolean visible = true;
+
+    public Setting(String name, Module parentMod) {
         this.name = name;
-        this.description = description;
-        this.value = value;
+        this.parentMod = parentMod;
     }
 
-    public String getName() { return name; }
-    public String getDescription() { return description; }
-    public T getValue() { return value; }
-    public void setValue(T value) { this.value = value; }
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Module getParentMod() {
+        return parentMod;
+    }
+
+    public void setParentMod(Module parentMod) {
+        this.parentMod = parentMod;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
 }
