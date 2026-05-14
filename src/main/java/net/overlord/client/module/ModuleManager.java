@@ -10,10 +10,11 @@ public class ModuleManager {
     public static void init() {
         modules.clear();
         String[] cats = {"COMBAT", "MOVEMENT", "VISUAL", "PLAYER", "MISC"};
-        
         for (String c : cats) {
             for (int i = 1; i <= 240; i++) {
-                modules.add(new Module(c + "_" + i, c));
+                Module m = new Module(c + "_" + i, c);
+                m.addSetting(new BooleanSetting("Active", true, m));
+                modules.add(m);
             }
         }
     }
