@@ -1,25 +1,26 @@
-package net.overlord.client.module;
+package com.adiadita343;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ModuleManager {
-    // Lista de module trebuie să fie statică pentru a fi accesată din ClickGuiScreen
-    public static List<HackModule> modules = new ArrayList<>();
+    public static List<Module> modules = new ArrayList<>();
 
-    public ModuleManager() {
-        if (modules.isEmpty()) {
-            // Generăm module de test pentru fiecare categorie
-            for (HackModule.Category category : HackModule.Category.values()) {
-                for (int i = 1; i <= 5; i++) {
-                    String name = category.name() + " Mod " + i;
-                    modules.add(new HackModule(name, category) {});
-                }
+    public static void init() {
+        modules.clear();
+        String[] cats = {"COMBAT", "MOVEMENT", "VISUAL", "PLAYER", "MISC"};
+        
+        for (String c : cats) {
+            for (int i = 1; i <= 240; i++) {
+                modules.add(new Module(c + "_" + i, c));
             }
         }
     }
 
-    public static List<HackModule> getModules() {
-        return modules;
+    public static List<Module> getModulesByCategory(String category) {
+        return modules.stream()
+                .filter(m -> m.category.equalsIgnoreCase(category))
+                .collect(Collectors.toList());
     }
 }
