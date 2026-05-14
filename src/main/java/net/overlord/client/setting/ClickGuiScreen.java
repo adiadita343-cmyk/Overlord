@@ -16,38 +16,18 @@ public class ClickGUI extends Screen {
         String[] cats = {"COMBAT", "MOVEMENT", "VISUAL", "PLAYER", "MISC"};
 
         for (String cat : cats) {
-            // Desenăm Header-ul categoriei
             context.fill(x, 20, x + 90, 35, 0xFF222222);
             context.drawTextWithShadow(textRenderer, cat, x + 5, 24, 0xFFFFFF);
-
             int y = 40;
-            // Afișăm primele 25 de module din categorie să nu aglomerăm ecranul
             for (Module m : ModuleManager.getModulesByCategory(cat).stream().limit(25).toList()) {
                 int bgColor = m.enabled ? 0xFF00AA00 : 0xFF333333;
                 context.fill(x, y, x + 90, y + 12, bgColor);
                 context.drawTextWithShadow(textRenderer, m.name, x + 5, y + 2, 0xFFFFFF);
-                
-                // Dacă modulul e "deschis" (Right Click), arătăm setările
-                if (m.opened) {
-                    for (BooleanSetting s : m.settings) {
-                        y += 12;
-                        context.fill(x + 5, y, x + 90, y + 10, 0xFF555555);
-                        String status = s.enabled ? "[ON]" : "[OFF]";
-                        context.drawTextWithShadow(textRenderer, s.name + " " + status, x + 10, y + 1, 0xAAAAAA);
-                    }
-                }
                 y += 14;
             }
             x += 100;
         }
         super.render(context, mouseX, mouseY, delta);
-    }
-
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        // Aici va veni logica de calculat unde ai dat click exact pentru Toggle
-        // Momentan, doar închidem meniul cu ESC sau îl lăsăm deschis.
-        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
