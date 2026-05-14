@@ -1,14 +1,22 @@
-package net.overlord.client.setting.impl;
+package com.adiadita343;
 
-import net.overlord.client.setting.Setting;
+public class BooleanSetting extends Setting {
+    private boolean enabled;
 
-public class BooleanSetting extends Setting<Boolean> {
+    public BooleanSetting(String name, boolean enabled, Module parentMod) {
+        super(name, parentMod);
+        this.enabled = enabled;
+    }
 
-    public BooleanSetting(String name, String description, boolean defaultValue) {
-        super(name, description, defaultValue);
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public void toggle() {
-        this.setValue(!this.getValue());
+        this.enabled = !this.enabled;
     }
 }
