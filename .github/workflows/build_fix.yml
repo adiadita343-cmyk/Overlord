@@ -8,6 +8,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Force Move Files
+        run: |
+          # Creăm folderul corect dacă nu există
+          mkdir -p src/main/java/com/adiadita343/
+          # Mutăm orice fișier .java găsit în rădăcină în folderul corect
+          mv *.java src/main/java/com/adiadita343/ || true
+
       - name: Setup Java 21
         uses: actions/setup-java@v4
         with:
