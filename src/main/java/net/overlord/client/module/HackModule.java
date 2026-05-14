@@ -1,37 +1,36 @@
-package net.overlord.client.module;
+package com.adiadita343;
 
-public abstract class HackModule {
-    private String name;
-    private Category category;
-    private boolean enabled;
+import net.minecraft.client.MinecraftClient;
+import java.util.ArrayList;
+import java.util.List;
 
-    public HackModule(String name, Category category) {
+public class HackModule {
+    public String name;
+    public String category;
+    public boolean enabled;
+    public List<Setting> settings = new ArrayList<>();
+    protected static MinecraftClient mc = MinecraftClient.getInstance();
+
+    public HackModule(String name, String category) {
         this.name = name;
         this.category = category;
         this.enabled = false;
     }
 
-    public enum Category {
-        COMBAT, MOVEMENT, RENDER, PLAYER, MISC
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Category getCategory() {
-        return category;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public void addSetting(Setting setting) {
+        this.settings.add(setting);
     }
 
     public void toggle() {
         this.enabled = !this.enabled;
+        if (enabled) {
+            onEnable();
+        } else {
+            onDisable();
+        }
     }
+
+    public void onEnable() {}
+    public void onDisable() {}
+    public void onTick() {}
 }
