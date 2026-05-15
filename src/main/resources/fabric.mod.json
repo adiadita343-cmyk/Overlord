@@ -1,13 +1,14 @@
 {
   "schemaVersion": 1,
   "id": "overlord",
-  "version": "${version}",
+  "version": "1.0.0",
   "name": "Overlord Mod",
-  "description": "Un mod epic creat de mine!",
+  "description": "Un mod epic creat de adiadita343!",
   "authors": [
     "adiadita343-cmyk"
   ],
   "contact": {
+    "homepage": "https://github.com/adiadita343-cmyk/Overlord",
     "sources": "https://github.com/adiadita343-cmyk/Overlord",
     "discord": "https://discord.gg/hHq6U6Jm"
   },
