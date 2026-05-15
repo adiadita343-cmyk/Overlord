@@ -12,30 +12,28 @@ public class ClickGuiScreen extends Screen {
     private Module bindingModule = null;
 
     public ClickGuiScreen() {
-        super(Text.literal("Overlord Apex"));
+        super(Text.literal("Overlord God"));
     }
 
     @Override
     protected void init() {
-        // Search Bar - Stil Meteor/Future
-        this.searchBar = new TextFieldWidget(this.textRenderer, this.width / 2 - 75, 12, 150, 14, Text.literal(""));
-        this.searchBar.setPlaceholder(Text.literal("Search..."));
+        // Search Bar Ultra-Minimalist
+        this.searchBar = new TextFieldWidget(this.textRenderer, this.width / 2 - 70, 8, 140, 14, Text.literal(""));
+        this.searchBar.setPlaceholder(Text.literal("🔍 Command..."));
         this.searchBar.setDrawsBackground(false);
         this.addSelectableChild(this.searchBar);
         this.setInitialFocus(this.searchBar);
-        this.searchBar.setFocused(true);
     }
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        // ZERO BLUR: Nu apelăm super.render(context, mouseX, mouseY, delta) la început!
-        // Desenăm un fundal negru extrem de fin (10% opacitate)
-        context.fill(0, 0, this.width, this.height, 0x1A000000); 
+        // ZERO BLUR - Fundal negru cinematic
+        context.fill(0, 0, this.width, this.height, 0x77000000);
 
-        // Randare Design Search Bar
-        int rainbow = Color.HSBtoRGB((System.currentTimeMillis() % 6000) / 6000f, 0.7f, 1f);
-        context.fill(this.width / 2 - 80, 10, this.width / 2 + 80, 28, 0xCC111111);
-        context.fill(this.width / 2 - 80, 27, this.width / 2 + 80, 28, rainbow);
+        int rainbow = Color.HSBtoRGB((System.currentTimeMillis() % 6000) / 6000f, 0.8f, 1f);
+        
+        // Randare Search Bar
+        context.fill(this.width / 2 - 75, 24, this.width / 2 + 75, 25, rainbow);
         this.searchBar.render(context, mouseX, mouseY, delta);
 
         int x = 20;
@@ -43,45 +41,37 @@ public class ClickGuiScreen extends Screen {
         String filter = searchBar.getText().toLowerCase();
 
         for (String cat : categories) {
-            // Panel Header
-            context.fill(x - 2, 35, x + 92, 48, 0xFF151515);
+            // Header Neon
+            context.fill(x - 2, 35, x + 92, 48, 0xFF0A0A0A);
             context.fill(x - 2, 47, x + 92, 48, rainbow);
-            context.drawTextWithShadow(this.textRenderer, "§l" + cat, x + 4, 37, 0xFFFFFF);
+            context.drawTextWithShadow(this.textRenderer, cat, x + 4, 37, 0xFFFFFF);
 
             int y = 52;
             for (Module m : ModuleManager.modules) {
                 if (m.category.equalsIgnoreCase(cat)) {
-                    // Filtrare Search
                     if (!filter.isEmpty() && !m.name.toLowerCase().contains(filter)) continue;
 
-                    boolean isHovered = mouseX >= x && mouseX <= x + 90 && mouseY >= y && mouseY <= y + 12;
+                    boolean hover = mouseX >= x && mouseX <= x + 90 && mouseY >= y && mouseY <= y + 12;
                     
-                    // Design Buton: Albastru dacă e ON, Gri dacă e OFF
-                    int btnColor = m.enabled ? (rainbow & 0x44FFFFFF) | 0x66000000 : (isHovered ? 0xAA444444 : 0xAA222222);
-                    context.fill(x, y, x + 90, y + 12, btnColor);
+                    // Design Butoane Overlord
+                    int bg = m.enabled ? (rainbow & 0x66FFFFFF) | 0x88000000 : (hover ? 0xAA333333 : 0x88111111);
+                    context.fill(x, y, x + 90, y + 12, bg);
 
-                    // Text Modul
-                    String text = (bindingModule == m) ? "§bBIND..." : (m.enabled ? "§f" + m.name : "§7" + m.name);
-                    context.drawTextWithShadow(this.textRenderer, text, x + 4, y + 2, 0xFFFFFF);
-
+                    String label = (bindingModule == m) ? "§bBINDING..." : (m.enabled ? "§f" + m.name : "§7" + m.name);
+                    context.drawTextWithShadow(this.textRenderer, label, x + 4, y + 2, 0xFFFFFF);
                     y += 14;
                 }
             }
             x += 105;
         }
 
-        // --- ACTIVE MODULES HUD (Arraylist) ---
-        renderHUD(context);
-    }
-
-    private void renderHUD(DrawContext context) {
-        int yHUD = 5;
+        // HUD - Lista Rainbow în timp real
+        int hY = 5;
         for (Module m : ModuleManager.modules) {
             if (m.enabled) {
-                int hudColor = Color.HSBtoRGB((System.currentTimeMillis() + (yHUD * 100)) % 6000 / 6000f, 0.6f, 1f);
-                int textWidth = this.textRenderer.getWidth(m.name);
-                context.drawTextWithShadow(this.textRenderer, m.name, this.width - textWidth - 5, yHUD, hudColor);
-                yHUD += 10;
+                int c = Color.HSBtoRGB((System.currentTimeMillis() + (hY * 150)) % 6000 / 6000f, 0.7f, 1f);
+                context.drawTextWithShadow(this.textRenderer, m.name.toLowerCase(), this.width - this.textRenderer.getWidth(m.name.toLowerCase()) - 5, hY, c);
+                hY += 10;
             }
         }
     }
@@ -89,20 +79,15 @@ public class ClickGuiScreen extends Screen {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (this.searchBar.mouseClicked(mouseX, mouseY, button)) return true;
-
         int x = 20;
-        String[] categories = {"COMBAT", "MOVEMENT", "VISUAL", "PLAYER", "MISC"};
-        String filter = searchBar.getText().toLowerCase();
-
-        for (String cat : categories) {
+        for (String cat : new String[]{"COMBAT", "MOVEMENT", "VISUAL", "PLAYER", "MISC"}) {
             int y = 52;
             for (Module m : ModuleManager.modules) {
                 if (m.category.equalsIgnoreCase(cat)) {
-                    if (!filter.isEmpty() && !m.name.toLowerCase().contains(filter)) continue;
-
+                    if (!searchBar.getText().isEmpty() && !m.name.toLowerCase().contains(searchBar.getText().toLowerCase())) continue;
                     if (mouseX >= x && mouseX <= x + 90 && mouseY >= y && mouseY <= y + 12) {
-                        if (button == 0) m.toggle(); // CLICK STÂNGA = ACTIVARE
-                        else if (button == 1) bindingModule = m; // CLICK DREAPTA = SETARE TASTĂ
+                        if (button == 0) m.toggle();
+                        else if (button == 1) bindingModule = m;
                         return true;
                     }
                     y += 14;
@@ -116,8 +101,7 @@ public class ClickGuiScreen extends Screen {
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (bindingModule != null) {
-            if (keyCode == GLFW.GLFW_KEY_ESCAPE) bindingModule.keyCode = 0;
-            else bindingModule.keyCode = keyCode;
+            bindingModule.keyCode = (keyCode == GLFW.GLFW_KEY_ESCAPE) ? 0 : keyCode;
             bindingModule = null;
             return true;
         }
@@ -129,11 +113,6 @@ public class ClickGuiScreen extends Screen {
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
-    @Override
-    public boolean charTyped(char chr, int modifiers) {
-        return this.searchBar.charTyped(chr, modifiers);
-    }
-
-    @Override
-    public boolean shouldPause() { return false; }
+    @Override public boolean charTyped(char chr, int modifiers) { return this.searchBar.charTyped(chr, modifiers); }
+    @Override public boolean shouldPause() { return false; }
 }
