@@ -11,9 +11,12 @@ jobs:
       - name: Organize Files
         run: |
           mkdir -p src/main/java/com/adiadita343/
+          # Mutăm tot ce e .java în folderul corect
           mv *.java src/main/java/com/adiadita343/ || true
+          # Ștergem mizeriile care blochează compilarea
           rm -f src/main/java/com/adiadita343/module.java
           rm -f src/main/java/com/adiadita343/d
+          rm -f src/main/java/com/adiadita343/ClickGUI.java
 
       - name: Setup Java 21
         uses: actions/setup-java@v4
@@ -21,10 +24,14 @@ jobs:
           java-version: '21'
           distribution: 'microsoft'
 
-      - name: Setup Gradle 8.10
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: '8.10' # Versiunea asta e compatibila cu Fabric Loom
+      - name: Force Gradle 8.10
+        run: |
+          # Aceasta linie instalează versiunea corectă de Gradle manual
+          wget https://services.gradle.org/distributions/gradle-8.10-bin.zip
+          unzip -d /opt/gradle gradle-8.10-bin.zip
+          echo "/opt/gradle/gradle-8.10/bin" >> $GITHUB_PATH
 
       - name: Build with Gradle
-        run: chmod +x gradlew && ./gradlew build --no-daemon
+        run: |
+          # Folosim 'gradle' direct în loc de './gradlew' ca să fim siguri că ia 8.10
+          gradle build --no-daemon
