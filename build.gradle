@@ -11,13 +11,17 @@ base {
 
 repositories {
     mavenCentral()
+    maven { url "https://maven.terraformersmc.com/releases/" }
 }
 
 dependencies {
     minecraft "com.mojang:minecraft:1.21.1"
     mappings "net.fabricmc:yarn:1.21.1+build.3:v2"
-    modImplementation "net.fabricmc:fabric-loader:0.15.11"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:0.102.0+1.21.1"
+    modImplementation "net.fabricmc:fabric-loader:0.16.5"
+
+    // Fabric API - Îl instalăm și îl BĂGĂM în interiorul modului (include)
+    modImplementation "net.fabricmc.fabric-api:fabric-api:0.104.0+1.21.1"
+    include "net.fabricmc.fabric-api:fabric-api:0.104.0+1.21.1"
 }
 
 processResources {
@@ -32,6 +36,7 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 java {
+    withSourcesJar()
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
 }
