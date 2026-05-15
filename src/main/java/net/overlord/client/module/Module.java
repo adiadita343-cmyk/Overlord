@@ -1,4 +1,4 @@
-package com.adiadita343;
+package net.overlord.client.module;
 
 import net.minecraft.client.MinecraftClient;
 
@@ -7,8 +7,6 @@ public class Module {
     public String category;
     public boolean enabled;
     public int keyCode = 0;
-    
-    // Aceasta este "instanța" de Minecraft. Prin 'mc' controlăm tot jocul.
     protected static final MinecraftClient mc = MinecraftClient.getInstance();
 
     public Module(String name, String category) {
@@ -25,9 +23,5 @@ public class Module {
 
     public void onEnable() {}
     public void onDisable() {}
-    
-    // Metoda asta e cea mai importantă! Aici scriem ce face hack-ul.
-    public void onTick() {
-        // Exemplu de logică universală (dacă e nevoie)
-    }
+    public void onTick() {}
 }
