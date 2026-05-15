@@ -7,13 +7,16 @@
   "authors": [
     "adiadita343-cmyk"
   ],
-  "contact": {},
+  "contact": {
+    "sources": "https://github.com/adiadita343-cmyk/Overlord",
+    "discord": "https://discord.gg/hHq6U6Jm"
+  },
   "license": "MIT",
   "icon": "assets/overlord/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.overlord.OverlordMod"
+      "com.adiadita343.OverlordMod"
     ]
   },
   "depends": {
