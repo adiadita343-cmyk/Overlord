@@ -8,16 +8,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Organize Files (The Fix)
+      - name: Organize Files
         run: |
-          # Creăm structura de foldere necesară pentru Fabric/Java
           mkdir -p src/main/java/com/adiadita343/
-          
-          # Mutăm toate fișierele .java din rădăcină în folderul creat
-          # Folosim || true ca să nu dea eroare dacă un fișier lipsește
           mv *.java src/main/java/com/adiadita343/ || true
-          
-          # Ștergem dublurile sau fișierele cu nume greșit (litere mici) care strică build-ul
           rm -f src/main/java/com/adiadita343/module.java
           rm -f src/main/java/com/adiadita343/d
 
@@ -27,14 +21,10 @@ jobs:
           java-version: '21'
           distribution: 'microsoft'
 
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v3
+      - name: Setup Gradle 8.10
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.10' # Versiunea asta e compatibila cu Fabric Loom
 
       - name: Build with Gradle
         run: chmod +x gradlew && ./gradlew build --no-daemon
-
-      - name: Upload Finished Mod
-        uses: actions/upload-artifact@v4
-        with:
-          name: Overlord-Mod-Jar
-          path: build/libs/*.jar
