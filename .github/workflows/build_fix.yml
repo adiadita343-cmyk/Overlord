@@ -8,12 +8,18 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Organize Files
+      - name: Organize and Clean Files
         run: |
+          # 1. Ștergem folderul vechi cu totul ca să nu mai existe duplicate
+          rm -rf src/main/java/net/
+          
+          # 2. Creăm folderul nou și curat
           mkdir -p src/main/java/com/adiadita343/
-          # Mutăm tot ce e .java în folderul corect
+          
+          # 3. Mutăm fișierele .java din rădăcină în folderul nou
           mv *.java src/main/java/com/adiadita343/ || true
-          # Ștergem mizeriile care blochează compilarea
+          
+          # 4. Ștergem fișierele "fantomă" care încă apar în erori
           rm -f src/main/java/com/adiadita343/module.java
           rm -f src/main/java/com/adiadita343/d
           rm -f src/main/java/com/adiadita343/ClickGUI.java
@@ -26,12 +32,10 @@ jobs:
 
       - name: Force Gradle 8.10
         run: |
-          # Aceasta linie instalează versiunea corectă de Gradle manual
           wget https://services.gradle.org/distributions/gradle-8.10-bin.zip
           unzip -d /opt/gradle gradle-8.10-bin.zip
           echo "/opt/gradle/gradle-8.10/bin" >> $GITHUB_PATH
 
       - name: Build with Gradle
         run: |
-          # Folosim 'gradle' direct în loc de './gradlew' ca să fim siguri că ia 8.10
           gradle build --no-daemon
