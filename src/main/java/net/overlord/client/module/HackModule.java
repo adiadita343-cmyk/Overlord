@@ -1,36 +1,31 @@
 package com.adiadita343;
 
-import net.minecraft.client.MinecraftClient;
-import java.util.ArrayList;
-import java.util.List;
-
-public class HackModule {
-    public String name;
-    public String category;
-    public boolean enabled;
-    public List<Setting> settings = new ArrayList<>();
-    protected static MinecraftClient mc = MinecraftClient.getInstance();
+// HackModule "moștenește" tot ce are Module
+public class HackModule extends Module {
 
     public HackModule(String name, String category) {
-        this.name = name;
-        this.category = category;
-        this.enabled = false;
+        super(name, category); // Trimite numele și categoria către fișierul Module.java
     }
 
-    public void addSetting(Setting setting) {
-        this.settings.add(setting);
-    }
-
+    @Override
     public void toggle() {
-        this.enabled = !this.enabled;
-        if (enabled) {
+        super.toggle(); // Face toggle-ul normal
+        
+        // Adăugăm ceva extra: un mesaj în consolă/log-uri
+        if (this.enabled) {
+            System.out.println("[Overlord] " + this.name + " a fost ACTIVAT!");
             onEnable();
         } else {
+            System.out.println("[Overlord] " + this.name + " a fost DEZACTIVAT!");
             onDisable();
         }
     }
 
-    public void onEnable() {}
-    public void onDisable() {}
-    public void onTick() {}
+    public void onEnable() {
+        // Aici vei pune cod special pentru când pornești hack-ul
+    }
+
+    public void onDisable() {
+        // Aici vei pune cod special pentru când îl oprești
+    }
 }
