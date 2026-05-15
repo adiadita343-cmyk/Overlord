@@ -19,10 +19,11 @@ public class OverlordMod implements ModInitializer {
             boolean isDown = InputUtil.isKeyPressed(client.getWindow().getHandle(), GLFW.GLFW_KEY_RIGHT_SHIFT);
             
             if (isDown && !shiftPressed) {
-                if (client.currentScreen instanceof ClickGUI) {
+                // IMPORTANT: Am schimbat din ClickGUI in ClickGuiScreen ca să se potrivească cu fișierul tău
+                if (client.currentScreen instanceof ClickGuiScreen) {
                     client.setScreen(null);
                 } else {
-                    client.setScreen(new ClickGUI());
+                    client.setScreen(new ClickGuiScreen());
                 }
                 shiftPressed = true;
             } else if (!isDown) {
@@ -31,7 +32,10 @@ public class OverlordMod implements ModInitializer {
 
             if (client.player != null) {
                 for (Module m : ModuleManager.modules) {
-                    m.onTick();
+                    // Executăm logica fiecărui modul activ
+                    if (m.enabled) {
+                        m.onTick();
+                    }
                 }
             }
         });
