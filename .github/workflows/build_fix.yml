@@ -8,22 +8,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Organize and Clean Files
-        run: |
-          # Ștergem orice urmă de foldere vechi care pot crea duplicate
-          rm -rf src/main/java/net/
-          
-          # Creăm structura de foldere care se potrivește cu package-ul com.adiadita343
-          mkdir -p src/main/java/com/adiadita343/
-          
-          # Mutăm fișierele .java din rădăcină în folderul corect
-          mv *.java src/main/java/com/adiadita343/ || true
-          
-          # Ștergem fișierele reziduale sau greșite care blochează compilarea
-          rm -f src/main/java/com/adiadita343/module.java
-          rm -f src/main/java/com/adiadita343/d
-          rm -f src/main/java/com/adiadita343/ClickGUI.java
-
       - name: Setup Java 21
         uses: actions/setup-java@v4
         with:
@@ -32,20 +16,17 @@ jobs:
 
       - name: Force Gradle 8.10
         run: |
-          # Gradle 9 e prea nou pentru plugin-ul Loom, folosim 8.10 care e stabil
           wget https://services.gradle.org/distributions/gradle-8.10-bin.zip
           unzip -d /opt/gradle gradle-8.10-bin.zip
           echo "/opt/gradle/gradle-8.10/bin" >> $GITHUB_PATH
 
       - name: Build with Gradle
         run: |
-          # Rulăm build-ul și ignorăm fișierele de test
-          gradle build --no-daemon
+          gradle clean build --no-daemon
 
       - name: Upload Finished Mod
         uses: actions/upload-artifact@v4
         with:
           name: Overlord-Mod-Jar
-          # Luăm toate fișierele .jar care nu sunt pentru surse sau dev
-          path: build/libs/overlord-*.jar
+          path: build/libs/*.jar
           if-no-files-found: error
