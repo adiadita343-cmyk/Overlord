@@ -4,7 +4,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.MathHelper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,24 +13,24 @@ public class ModuleManager {
     private static final MinecraftClient mc = MinecraftClient.getInstance();
 
     public static void init() {
-        // --- CORE HACKS (Logica lor e dedesubt) ---
+        // --- CORE MODULES (Baza de putere) ---
         add("KillAura", "COMBAT");
         add("Flight", "MOVEMENT");
         add("Speed", "MOVEMENT");
         add("NoFall", "PLAYER");
         add("Fullbright", "VISUAL");
-        add("Spider", "MOVEMENT");
-        add("Jesus", "MOVEMENT");
         add("AutoTotem", "COMBAT");
-        add("FastPlace", "PLAYER");
-        add("NoSlow", "MOVEMENT");
+        add("Velocity", "COMBAT");
+        add("Spider", "MOVEMENT");
+        add("Scaffold", "PLAYER");
 
-        // --- GENERATORUL DE 2500+ MODULE (Pentru volum masiv) ---
-        String[] realNames = {"Aimbot", "Blink", "Phase", "Step", "Nuker", "Scaffold", "Tower", "Freecam", "Timer", "AutoMine", "FastBreak", "ChestStealer", "AutoArmor", "AntiAfk", "Tracer", "XRay", "ESP", "Nametags"};
+        // --- GENERATOR DE 2500+ MODULE (Nume de hack-uri reale) ---
+        String[] hacks = {"Aimbot", "BowAimbot", "AutoClicker", "Reach", "FastBow", "Blink", "Phase", "Step", "Jesus", "ElytraFly", "AntiAfk", "AutoEat", "FastPlace", "ChestStealer", "XRay", "ESP", "Tracers", "Nametags", "Nuker", "AutoMine", "Timer", "Freecam"};
         String[] cats = {"COMBAT", "MOVEMENT", "VISUAL", "PLAYER", "MISC"};
 
         for (int i = 0; i < 2500; i++) {
-            add(realNames[i % realNames.length] + "_" + (i + 1), cats[i % cats.length]);
+            String name = hacks[i % hacks.length] + "_" + (i + 1);
+            add(name, cats[i % cats.length]);
         }
     }
 
@@ -39,20 +38,16 @@ public class ModuleManager {
         modules.add(new Module(name, cat));
     }
 
-    // --- MOTORUL DE LOGICĂ (Aici se întâmplă hack-ul) ---
     public static void onTick() {
         if (mc.player == null || mc.world == null) return;
 
         for (Module m : modules) {
             if (m.enabled) {
-                m.onTick();
-
-                // ⚔️ 1. KILL AURA (Atac automat cu rotații de cap)
+                // 1. KILL AURA (Atac automat inteligent)
                 if (m.name.equals("KillAura")) {
                     for (Entity target : mc.world.getEntities()) {
                         if (target instanceof PlayerEntity && target != mc.player && target.isAlive()) {
-                            if (mc.player.distanceTo(target) < 4.5f) {
-                                // Simulăm atacul
+                            if (mc.player.distanceTo(target) < 4.2f) {
                                 mc.interactionManager.attackEntity(mc.player, target);
                                 mc.player.swingHand(mc.player.getActiveHand());
                                 break; 
@@ -61,50 +56,32 @@ public class ModuleManager {
                     }
                 }
 
-                // ✈️ 2. FLIGHT (Zbor Bypass pe Survival)
+                // 2. FLIGHT (Zbor Bypass pe 1.21.1)
                 if (m.name.equals("Flight")) {
                     mc.player.getAbilities().flying = true;
-                    Vec3d vel = mc.player.getVelocity();
-                    double jump = mc.options.jumpKey.isPressed() ? 0.06 : (mc.options.sneakKey.isPressed() ? -0.06 : 0);
-                    mc.player.setVelocity(vel.x, jump, vel.z);
+                    double ySpeed = mc.options.jumpKey.isPressed() ? 0.05 : (mc.options.sneakKey.isPressed() ? -0.05 : 0);
+                    mc.player.addVelocity(0, ySpeed, 0);
                 }
 
-                // ⚡ 3. SPEED (Viteză Ultra)
+                // 3. SPEED (Viteză crescută)
                 if (m.name.equals("Speed")) {
-                    if (mc.player.isOnGround() && (mc.player.input.movementForward != 0 || mc.player.input.movementSideways != 0)) {
-                        mc.player.updateVelocity(0.25f, mc.player.getRotationVector());
-                        mc.player.jump(); // BunnyHop logic
+                    if (mc.player.isOnGround() && mc.player.input.hasForwardMovement()) {
+                        mc.player.updateVelocity(0.12f, mc.player.getRotationVector());
                     }
                 }
 
-                // 🛡️ 4. NO FALL (Nu iei damage de cădere)
+                // 4. NO FALL (Anularea damage-ului)
                 if (m.name.equals("NoFall")) {
-                    if (mc.player.fallDistance > 2.0f) {
+                    if (mc.player.fallDistance > 2.5f) {
                         mc.player.setOnGround(true);
                         mc.player.setVelocity(mc.player.getVelocity().x, -0.1, mc.player.getVelocity().z);
                     }
                 }
 
-                // 🕷️ 5. SPIDER (Urcă pe pereți)
-                if (m.name.equals("Spider")) {
-                    if (mc.player.horizontalCollision) {
-                        mc.player.setVelocity(mc.player.getVelocity().x, 0.2, mc.player.getVelocity().z);
-                    }
-                }
-
-                // 💧 6. JESUS (Mers pe apă)
-                if (m.name.equals("Jesus")) {
-                    if (mc.world.getBlockState(mc.player.getBlockPos()).getFluidState().isStill()) {
-                        mc.player.setVelocity(mc.player.getVelocity().x, 0.1, mc.player.getVelocity().z);
-                        mc.player.setOnGround(true);
-                    }
-                }
-
-                // 💡 7. FULLBRIGHT
+                // 5. FULLBRIGHT
                 if (m.name.equals("Fullbright")) {
                     mc.options.getGamma().setValue(100.0);
                 }
-
             } else {
                 // RESETĂRI (Dezactivare)
                 if (m.name.equals("Flight") && !mc.player.isCreative()) {
@@ -117,13 +94,13 @@ public class ModuleManager {
         }
     }
 
-    // Metode suport ClickGUI
+    // Metode necesare pentru funcționarea GUI-ului
     public static List<Module> getSearchQuery(String query) {
         if (query == null || query.isEmpty()) return modules;
-        return modules.stream().filter(mod -> mod.name.toLowerCase().contains(query.toLowerCase())).collect(Collectors.toList());
+        return modules.stream().filter(m -> m.name.toLowerCase().contains(query.toLowerCase())).collect(Collectors.toList());
     }
 
     public static List<Module> getEnabledModules() {
-        return modules.stream().filter(mod -> mod.enabled).collect(Collectors.toList());
+        return modules.stream().filter(m -> m.enabled).collect(Collectors.toList());
     }
 }
