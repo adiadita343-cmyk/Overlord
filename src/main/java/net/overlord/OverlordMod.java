@@ -13,72 +13,67 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Overlord Client - Main Entry Point
- * Creat pentru performanță maximă și zero detectabilitate.
+ * Overlord Client v1.0 - Proiectat pentru dominare totală.
+ * Acest entry point pornește toate sistemele critice în mod silențios.
  */
 public class OverlordMod implements ClientModInitializer {
-    public static final String MOD_NAME = "Overlord";
-    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_NAME);
+    public static final String MOD_ID = "overlord";
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-    // Keybind-ul principal pentru deschiderea meniului (RIGHT SHIFT)
+    // Tasta pentru deschiderea interfeței (Implicit: RIGHT_SHIFT)
     private static KeyBinding guiKeyBind;
 
     @Override
     public void onInitializeClient() {
-        // 1. Inițializăm „creierul” clientului
-        // Aceasta încarcă KillAura, Fly și celelalte 2500 de module
+        // 1. Inițializăm lista masivă de module (cele 2500+)
+        // Aceasta trebuie să ruleze prima dată pentru a popula memoria
         ModuleManager.init();
 
-        // 2. Înregistrăm tasta pentru meniu
+        // 2. Înregistrăm tasta oficială pentru meniul Overlord
         guiKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "category.overlord.gui", 
+                "key.overlord.gui", 
                 InputUtil.Type.KEYSYM, 
                 GLFW.GLFW_KEY_RIGHT_SHIFT, 
                 "category.overlord.main"
         ));
 
-        // 3. MOTORUL DE EXECUȚIE (Endless Loop)
-        // Acest eveniment rulează la fiecare „tick” de Minecraft (de 20 de ori pe secundă)
+        // 3. EXECUTORUL DE TICKS (Sistemul de operare al clientului)
+        // Rulează de 20 de ori pe secundă sincronizat cu Minecraft
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            // Verificăm dacă suntem într-o lume, altfel dăm crash
             if (client.player == null || client.world == null) return;
 
-            // Verificăm dacă playerul a apăsat tasta de meniu
+            // Logica pentru deschiderea GUI-ului
             while (guiKeyBind.wasPressed()) {
                 client.setScreen(new ClickGuiScreen());
             }
 
-            // --- EXECUȚIA LOGICII HACK-URILOR ---
-            // Această linie pornește KillAura, Flight, Speed etc.
+            // --- PROCESAREA LOGICII HACK-URILOR ---
+            // Această linie apelează metodele onTick din ModuleManager (KillAura, Fly, Speed)
             try {
                 ModuleManager.onTick();
             } catch (Exception e) {
-                // Prevenim crash-ul jocului dacă un modul are erori
-                LOGGER.error("Eroare la procesarea modulelor Overlord: " + e.getMessage());
+                // Dacă un hack „o ia razna”, prindem eroarea aici ca să nu închidem jocul
+                LOGGER.error("[Overlord Error] Eroare critică în execuția modulelor: " + e.getMessage());
             }
 
             // --- SISTEMUL DE KEYBINDS PENTRU MODULE ---
-            // Permite activarea hack-urilor prin taste (ex: G pentru Fly)
+            // Verifică dacă ai setat taste specifice pentru hack-uri (ex: F pentru Flight)
             for (Module m : ModuleManager.modules) {
-                if (m.keyCode != 0) {
-                    // Dacă tasta setată în ClickGUI este apăsată
+                if (m.keyCode != 0 && client.currentScreen == null) {
+                    // Verificăm dacă tasta este apăsată în acest moment
                     if (InputUtil.isKeyPressed(client.getWindow().getHandle(), m.keyCode)) {
-                        // Implementăm un sistem anti-spam (să nu facă toggle la infinit)
-                        if (client.currentScreen == null) {
-                            // Logica de debouncing poate fi adăugată aici
-                        }
+                        // Aici se poate adăuga un toggle delay dacă vrei
                     }
                 }
             }
         });
 
-        // Log silențios în consolă pentru confirmare
-        LOGGER.info("[Overlord] Injectat cu succes. Toate sistemele sunt online.");
+        // Mesaj de confirmare doar în consolă (Silențios în joc)
+        LOGGER.info("Overlord Client: Toate sistemele de bypass sunt online. Succes!");
     }
 
-    /**
-     * Metodă utilitară pentru accesarea rapidă a numelui clientului
-     */
-    public static String getVersion() {
-        return "1.0.0-APEX";
+    public static String getClientName() {
+        return "Overlord Apex";
     }
 }
