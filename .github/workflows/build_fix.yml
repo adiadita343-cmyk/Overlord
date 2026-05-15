@@ -10,16 +10,16 @@ jobs:
 
       - name: Organize and Clean Files
         run: |
-          # 1. Ștergem folderul vechi cu totul ca să nu mai existe duplicate
+          # Ștergem orice urmă de foldere vechi care pot crea duplicate
           rm -rf src/main/java/net/
           
-          # 2. Creăm folderul nou și curat
+          # Creăm structura de foldere care se potrivește cu package-ul com.adiadita343
           mkdir -p src/main/java/com/adiadita343/
           
-          # 3. Mutăm fișiderele .java din rădăcină în folderul nou
+          # Mutăm fișierele .java din rădăcină în folderul corect
           mv *.java src/main/java/com/adiadita343/ || true
           
-          # 4. Ștergem fișierele "fantomă" care încă apar în erori
+          # Ștergem fișierele reziduale sau greșite care blochează compilarea
           rm -f src/main/java/com/adiadita343/module.java
           rm -f src/main/java/com/adiadita343/d
           rm -f src/main/java/com/adiadita343/ClickGUI.java
@@ -32,10 +32,20 @@ jobs:
 
       - name: Force Gradle 8.10
         run: |
+          # Gradle 9 e prea nou pentru plugin-ul Loom, folosim 8.10 care e stabil
           wget https://services.gradle.org/distributions/gradle-8.10-bin.zip
           unzip -d /opt/gradle gradle-8.10-bin.zip
           echo "/opt/gradle/gradle-8.10/bin" >> $GITHUB_PATH
 
       - name: Build with Gradle
         run: |
+          # Rulăm build-ul și ignorăm fișierele de test
           gradle build --no-daemon
+
+      - name: Upload Finished Mod
+        uses: actions/upload-artifact@v4
+        with:
+          name: Overlord-Mod-Jar
+          # Luăm toate fișierele .jar care nu sunt pentru surse sau dev
+          path: build/libs/overlord-*.jar
+          if-no-files-found: error
