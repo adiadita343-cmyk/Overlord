@@ -16,7 +16,7 @@ jobs:
           # 2. Creăm folderul nou și curat
           mkdir -p src/main/java/com/adiadita343/
           
-          # 3. Mutăm fișierele .java din rădăcină în folderul nou
+          # 3. Mutăm fișiderele .java din rădăcină în folderul nou
           mv *.java src/main/java/com/adiadita343/ || true
           
           # 4. Ștergem fișierele "fantomă" care încă apar în erori
