@@ -7,8 +7,8 @@ public class Module {
     public String name;
     public String category;
     public boolean enabled;
-    public int keyCode = 0; // ACEASTA ERA LINIA LIPSA!
-    public List<Setting> settings = new ArrayList<>();
+    public int keyCode = 0;
+    public List<Object> settings = new ArrayList<>(); // Pentru viitoarele setări
 
     public Module(String name, String category) {
         this.name = name;
@@ -16,13 +16,9 @@ public class Module {
         this.enabled = false;
     }
 
-    public void addSetting(Setting setting) {
-        this.settings.add(setting);
-    }
-
     public void toggle() {
         this.enabled = !this.enabled;
-        if (this.enabled) onEnable();
+        if (enabled) onEnable();
         else onDisable();
     }
 
