@@ -8,6 +8,7 @@ public abstract class Module {
     public boolean enabled;
     public int keyCode;
 
+    // Asta lipsea si repara toate erorile din registre!
     protected static final MinecraftClient mc = MinecraftClient.getInstance();
 
     public Module(String name, String category) {
