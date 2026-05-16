@@ -1,12 +1,11 @@
-package com.adiadita343;
+package com.adiadita343.module; // Verifică dacă pachetul e corect aici!
 
 import net.minecraft.client.MinecraftClient;
 
-public class Module {
+public abstract class Module {
     public String name;
     public String category;
     public boolean enabled;
-    public int keyCode = 0;
     protected static final MinecraftClient mc = MinecraftClient.getInstance();
 
     public Module(String name, String category) {
@@ -23,5 +22,7 @@ public class Module {
 
     public void onEnable() {}
     public void onDisable() {}
-    public void onTick() {}
+    
+    // Această metodă va fi chemată DOAR când modulul e pornit
+    public abstract void onTick();
 }
