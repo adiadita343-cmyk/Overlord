@@ -1,33 +1,38 @@
-package net.overlord.com.adiadita343.client.setting; // REPARAT: Trebuie să fie în ierarhia ta
+package net.overlord.adiadita343.setting;
 
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
-import java.awt.Color;
 import java.util.List;
 
-// --- IMPORTURI CRITICE PENTRU COMPILARE ---
-import net.overlord.com.adiadita343.module.Module;
-import net.overlord.com.adiadita343.module.ModuleManager;
+import net.overlord.adiadita343.module.Module;
+import net.overlord.adiadita343.module.ModuleManager;
 
 public class ClickGuiScreen extends Screen {
     private TextFieldWidget searchBar;
     private Module bindingModule = null;
-    private String tooltip = "Overlord Client | Galactic Edition";
+    private String tooltip = "Overlord Elite | Meteor Engine";
+
+    // Culori fixe în format Hex (ARGB): Meteor Dark Style
+    private final int BG_COLOR = 0x660B0B0C;       // Fundal general închis amortizat
+    private final int CORE_DARK = 0xEE111112;      // Panou interior module
+    private final int ACCENT_PURPLE = 0xFF8A2BE2;  // Mov Electric când e ENABLED (Neon Purple)
+    private final int TEXT_ENABLED = 0xFFFFFFFF;   // Text alb curat când e activ
+    private final int TEXT_DISABLED = 0xFF7A7A7D;  // Text gri industrial când e inactiv
+    private final int TEXT_HOVER = 0xFFBF80FF;     // Text mov pal la mouse hover
 
     public ClickGuiScreen() {
-        super(Text.literal("Overlord Apex"));
+        super(Text.literal("Overlord Engine"));
     }
 
     @Override
     protected void init() {
-        // Design Minimalist de tip "Floating"
+        // Bara de căutare plutitoare, stil minimalist Meteor
         this.searchBar = new TextFieldWidget(this.textRenderer, this.width / 2 - 90, 15, 180, 16, Text.literal(""));
-        this.searchBar.setPlaceholder(Text.literal("🔍 Explore the universe..."));
-        this.searchBar.setDrawsBackground(false); 
-        
+        this.searchBar.setPlaceholder(Text.literal("🔍 Search modules..."));
+        this.searchBar.setDrawsBackground(false);
         this.addSelectableChild(this.searchBar);
         this.setInitialFocus(this.searchBar);
         this.searchBar.setFocused(true);
@@ -35,14 +40,12 @@ public class ClickGuiScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        // 1. Fundal cinematic
-        context.fill(0, 0, this.width, this.height, 0x55000000);
+        // 1. Fundal întunecat curat, fără blur enervant
+        context.fill(0, 0, this.width, this.height, BG_COLOR);
 
-        int rainbow = Color.HSBtoRGB((System.currentTimeMillis() % 6000) / 6000f, 0.8f, 1f);
-
-        // 2. Render Search Bar
-        context.fill(this.width / 2 - 95, 10, this.width / 2 + 95, 35, 0xAA0A0A0A);
-        context.fill(this.width / 2 - 95, 34, this.width / 2 + 95, 35, rainbow);
+        // 2. Randare fundal search bar (Carbon Glass Design)
+        context.fill(this.width / 2 - 95, 10, this.width / 2 + 95, 34, CORE_DARK);
+        context.fill(this.width / 2 - 95, 33, this.width / 2 + 95, 34, ACCENT_PURPLE);
         this.searchBar.render(context, mouseX, mouseY, delta);
 
         int x = 20;
@@ -50,56 +53,46 @@ public class ClickGuiScreen extends Screen {
         String filter = searchBar.getText();
 
         for (String cat : categories) {
-            // 3. Header Categorie
-            context.fill(x - 4, 45, x + 104, 60, 0xDD151515);
-            context.fill(x - 4, 59, x + 104, 60, rainbow);
-            context.drawTextWithShadow(this.textRenderer, "§l" + cat, x + 6, 48, 0xFFFFFF);
+            // 3. Cadru Categorie (Meniu tip Meteor)
+            context.fill(x - 4, 45, x + 104, 58, CORE_DARK);
+            context.fill(x - 4, 57, x + 104, 58, ACCENT_PURPLE);
+            context.drawTextWithShadow(this.textRenderer, cat, x + 6, 47, TEXT_ENABLED);
 
             List<Module> filteredModules = ModuleManager.getSearchQuery(filter);
             
-            int y = 64;
+            int y = 62;
             int count = 0;
             for (Module m : filteredModules) {
                 if (m.category.equalsIgnoreCase(cat)) {
-                    if (count > 22) break;
+                    if (count > 22) break; // Siguranță ecran
 
-                    boolean isHovered = mouseX >= x && mouseX <= x + 100 && mouseY >= y && mouseY <= y + 14;
-                    if (isHovered) tooltip = "§7Modul: §f" + m.name + " §8| §7Cat: §b" + m.category;
+                    boolean isHovered = mouseX >= x && mouseX <= x + 100 && mouseY >= y && mouseY <= y + 13;
+                    if (isHovered) tooltip = "Module: " + m.name + " | Category: " + m.category;
 
-                    // 4. Animație Buton
-                    int btnAlpha = m.enabled ? 0x99 : (isHovered ? 0x66 : 0x44);
-                    int btnColor = (btnAlpha << 24) | (m.enabled ? (rainbow & 0x00FFFFFF) : 0x222222);
+                    // 4. Logica culorilor: Când e pornit devine complet Mov Electric solid. Altfel e gri/negru.
+                    int btnColor = m.enabled ? ACCENT_PURPLE : (isHovered ? 0x2A2A2C : 0x18181A);
+                    int textColor = m.enabled ? TEXT_ENABLED : (isHovered ? TEXT_HOVER : TEXT_DISABLED);
                     
-                    context.fill(x, y, x + 100, y + 13, btnColor);
+                    // Desenăm butonul
+                    context.fill(x, y, x + 100, y + 12, (0xFF << 24) | btnColor);
 
-                    String label = (bindingModule == m) ? "§bBINDING..." : (m.enabled ? "§f" + m.name : "§7" + m.name);
-                    context.drawTextWithShadow(this.textRenderer, label, x + 4, y + 3, 0xFFFFFF);
+                    // Randare text
+                    String label = (bindingModule == m) ? "...Binds" : m.name;
+                    context.drawTextWithShadow(this.textRenderer, label, x + 4, y + 2, textColor);
 
-                    y += 16;
+                    y += 15;
                     count++;
                 }
             }
             x += 115;
         }
 
-        // 5. Tooltip Bar
-        context.fill(0, this.height - 20, this.width, this.height, 0xCC050505);
-        context.fill(0, this.height - 21, this.width, this.height - 20, rainbow);
-        context.drawTextWithShadow(this.textRenderer, tooltip, 10, this.height - 14, 0xFFFFFF);
+        // 5. Bara inferioară de stare / Informații
+        context.fill(0, this.height - 18, this.width, this.height, 0xFF0D0D0E);
+        context.fill(0, this.height - 19, this.width, this.height - 18, ACCENT_PURPLE);
+        context.drawTextWithShadow(this.textRenderer, tooltip, 10, this.height - 13, TEXT_DISABLED);
 
-        renderHUD(context);
-    }
-
-    private void renderHUD(DrawContext context) {
-        int y = 5;
-        // Folosim metoda noua din ModuleManager
-        for (Module m : ModuleManager.getEnabledModules()) {
-            if (!m.name.contains("_")) { 
-                int color = Color.HSBtoRGB((System.currentTimeMillis() + (y * 120)) % 6000 / 6000f, 0.7f, 1f);
-                context.drawTextWithShadow(this.textRenderer, m.name.toLowerCase(), this.width - this.textRenderer.getWidth(m.name) - 5, y, color);
-                y += 10;
-            }
-        }
+        // HUD-ul VECHI A FOST ȘTERS DE AICI (Nu mai există apelul renderHUD)
     }
 
     @Override
@@ -109,17 +102,17 @@ public class ClickGuiScreen extends Screen {
         int x = 20;
         String filter = searchBar.getText();
         for (String cat : new String[]{"COMBAT", "MOVEMENT", "VISUAL", "PLAYER", "MISC"}) {
-            int y = 64;
+            int y = 62;
             int count = 0;
             for (Module m : ModuleManager.getSearchQuery(filter)) {
                 if (m.category.equalsIgnoreCase(cat)) {
                     if (count > 22) break;
-                    if (mouseX >= x && mouseX <= x + 100 && mouseY >= y && mouseY <= y + 13) {
-                        if (button == 0) m.toggle();
-                        else if (button == 1) bindingModule = m;
+                    if (mouseX >= x && mouseX <= x + 100 && mouseY >= y && mouseY <= y + 12) {
+                        if (button == 0) m.toggle(); // Click Stânga pornește/oprește
+                        else if (button == 1) bindingModule = m; // Click Dreapta pune bind
                         return true;
                     }
-                    y += 16;
+                    y += 15;
                     count++;
                 }
             }
