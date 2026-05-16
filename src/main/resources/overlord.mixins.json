@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "minMixinVersion": "0.8",
+  "package": "com.adiadita343.overlord.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "MinecraftClientMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
