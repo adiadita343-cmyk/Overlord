@@ -48,7 +48,7 @@ public class MovementRegistry {
             }
         });
 
-        // 3. STEP (Trecere instant peste obstacole de 2 blocuri - FIX)
+        // 3. STEP (Trecere instant peste obstacole de 2 blocuri - FIX DEFINITIV)
         ModuleManager.addModule(new Module("Step", "MOVEMENT") {
             @Override
             public void onTick() {
@@ -119,7 +119,6 @@ public class MovementRegistry {
                 
                 BlockPos subPos = mc.player.getBlockPos().down();
                 if (mc.world.getBlockState(subPos).isAir()) {
-                    // Caută un bloc valid în hotbar și pune-l sub jucător
                     BlockHitResult hitResult = new BlockHitResult(
                         new Vec3d(subPos.getX() + 0.5, subPos.getY() + 1, subPos.getZ() + 0.5), 
                         Direction.UP, subPos, false
@@ -130,7 +129,7 @@ public class MovementRegistry {
             }
         });
 
-        // 9. EXTRA GENERIC MODULES (Până la restul listei tale extinse)
+        // 9. EXTRA GENERIC MODULES (Până la restul listei tale extinse de 2500+ moduri)
         String[] extraMoves = {
             "HighJump", "LongJump", "Jetpack", "Glide", "FastLadder", 
             "LiquidWalk", "Phase", "Blink", "Strafe", "SafeWalk", 
