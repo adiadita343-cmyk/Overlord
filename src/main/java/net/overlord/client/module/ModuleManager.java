@@ -16,7 +16,6 @@ public class ModuleManager {
         MovementRegistry.register();
         VisualRegistry.register();
         PlayerRegistry.register();
-        System.out.println("[Overlord] Module incarcate pentru pachetul adiadita343!");
     }
 
     public static void addModule(Module m) {
