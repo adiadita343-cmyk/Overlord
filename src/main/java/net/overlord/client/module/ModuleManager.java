@@ -1,84 +1,42 @@
-package com.adiadita343;
+package com.adiadita343.module;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ModuleManager {
-    public static List<Module> modules = new ArrayList<>();
-    private static final MinecraftClient mc = MinecraftClient.getInstance();
+    public static final List<Module> modules = new ArrayList<>();
+    
+    // Optimizare stil Meteor: Procesăm doar ce e activ
+    public static final List<Module> activeModules = new ArrayList<>();
 
     public static void init() {
-        // --- MODULE ELITE ---
-        add("KillAura", "COMBAT");
-        add("Flight", "MOVEMENT");
-        add("Speed", "MOVEMENT");
-        add("NoFall", "PLAYER");
-        add("Fullbright", "VISUAL");
-        add("Spider", "MOVEMENT");
-
-        // --- GENERATOR MASIV (Mii de hack-uri) ---
-        String[] hacks = {"Aimbot", "Blink", "Phase", "Step", "Jesus", "Nuker", "Scaffold", "XRay", "ESP", "Tracers", "Nametags", "FastPlace", "AutoEat"};
-        String[] cats = {"COMBAT", "MOVEMENT", "VISUAL", "PLAYER", "MISC"};
+        modules.clear();
         
-        for (int i = 0; i < 2000; i++) {
-            add(hacks[i % hacks.length] + "_" + (i + 1), cats[i % cats.length]);
-        }
+        // Aici injectăm manual TOATE listele tale
+        CombatRegistry.register(); 
+        MovementRegistry.register();
+        VisualRegistry.register();
+        PlayerRegistry.register();
+
+        System.out.println("[Overlord] 2500+ Module încărcate manual.");
     }
 
-    private static void add(String name, String cat) {
-        modules.add(new Module(name, cat));
+    public static void addModule(Module m) {
+        modules.add(m);
     }
 
     public static void onTick() {
         if (mc.player == null) return;
+
+        // Actualizăm lista de module pornite (cache)
+        activeModules.clear();
         for (Module m : modules) {
-            if (m.enabled) {
-                m.onTick();
-                
-                // LOGICA KILLAURA
-                if (m.name.equals("KillAura")) {
-                    for (Entity target : mc.world.getEntities()) {
-                        if (target instanceof PlayerEntity && target != mc.player && mc.player.distanceTo(target) < 4.2) {
-                            mc.interactionManager.attackEntity(mc.player, target);
-                            mc.player.swingHand(mc.player.getActiveHand());
-                            break;
-                        }
-                    }
-                }
-                
-                // LOGICA FLIGHT
-                if (m.name.equals("Flight")) {
-                    mc.player.getAbilities().flying = true;
-                }
-                
-                // LOGICA FULLBRIGHT
-                if (m.name.equals("Fullbright")) {
-                    mc.options.getGamma().setValue(100.0);
-                }
-            } else {
-                // RESETĂRI
-                if (m.name.equals("Flight") && !mc.player.isCreative()) {
-                    mc.player.getAbilities().flying = false;
-                }
-                if (m.name.equals("Fullbright")) {
-                    mc.options.getGamma().setValue(1.0);
-                }
-            }
+            if (m.enabled) activeModules.add(m);
         }
-    }
 
-    public static List<Module> getSearchQuery(String query) {
-        if (query == null || query.isEmpty()) return modules;
-        return modules.stream()
-                .filter(m -> m.name.toLowerCase().contains(query.toLowerCase()))
-                .collect(Collectors.toList());
-    }
-
-    public static List<Module> getEnabledModules() {
-        return modules.stream().filter(m -> m.enabled).collect(Collectors.toList());
+        // Executăm logica DOAR pentru modulele pornite
+        for (Module m : activeModules) {
+            m.onTick();
+        }
     }
 }
