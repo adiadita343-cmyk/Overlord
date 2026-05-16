@@ -1,4 +1,4 @@
-package com.adiadita343;
+package net.overlord.com.adiadita343.client.setting; // REPARAT: Trebuie să fie în ierarhia ta
 
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -7,6 +7,10 @@ import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 import java.awt.Color;
 import java.util.List;
+
+// --- IMPORTURI CRITICE PENTRU COMPILARE ---
+import net.overlord.com.adiadita343.module.Module;
+import net.overlord.com.adiadita343.module.ModuleManager;
 
 public class ClickGuiScreen extends Screen {
     private TextFieldWidget searchBar;
@@ -19,10 +23,10 @@ public class ClickGuiScreen extends Screen {
 
     @Override
     protected void init() {
-        // Search Bar - Design Minimalist de tip "Floating"
+        // Design Minimalist de tip "Floating"
         this.searchBar = new TextFieldWidget(this.textRenderer, this.width / 2 - 90, 15, 180, 16, Text.literal(""));
         this.searchBar.setPlaceholder(Text.literal("🔍 Explore the universe..."));
-        this.searchBar.setDrawsBackground(false); // Îi facem noi fundal custom
+        this.searchBar.setDrawsBackground(false); 
         
         this.addSelectableChild(this.searchBar);
         this.setInitialFocus(this.searchBar);
@@ -31,13 +35,12 @@ public class ClickGuiScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        // 1. ZERO BLUR - Fundal negru cinematic cu opacitate variabilă
+        // 1. Fundal cinematic
         context.fill(0, 0, this.width, this.height, 0x55000000);
 
-        // Culoare Rainbow pentru accente (Jupiter Style)
         int rainbow = Color.HSBtoRGB((System.currentTimeMillis() % 6000) / 6000f, 0.8f, 1f);
 
-        // 2. RENDER SEARCH BAR (Custom Glass Design)
+        // 2. Render Search Bar
         context.fill(this.width / 2 - 95, 10, this.width / 2 + 95, 35, 0xAA0A0A0A);
         context.fill(this.width / 2 - 95, 34, this.width / 2 + 95, 35, rainbow);
         this.searchBar.render(context, mouseX, mouseY, delta);
@@ -47,30 +50,28 @@ public class ClickGuiScreen extends Screen {
         String filter = searchBar.getText();
 
         for (String cat : categories) {
-            // 3. HEADER CATEGORIE - Stil Glass Morphism
+            // 3. Header Categorie
             context.fill(x - 4, 45, x + 104, 60, 0xDD151515);
             context.fill(x - 4, 59, x + 104, 60, rainbow);
             context.drawTextWithShadow(this.textRenderer, "§l" + cat, x + 6, 48, 0xFFFFFF);
 
-            // Obținem modulele filtrate direct din motorul nostru de 1 miliard
             List<Module> filteredModules = ModuleManager.getSearchQuery(filter);
             
             int y = 64;
             int count = 0;
             for (Module m : filteredModules) {
                 if (m.category.equalsIgnoreCase(cat)) {
-                    if (count > 22) break; // Să nu iasă din ecran
+                    if (count > 22) break;
 
                     boolean isHovered = mouseX >= x && mouseX <= x + 100 && mouseY >= y && mouseY <= y + 14;
-                    if (isHovered) tooltip = "§7Modul: §f" + m.name + " §8| §7Category: §b" + m.category;
+                    if (isHovered) tooltip = "§7Modul: §f" + m.name + " §8| §7Cat: §b" + m.category;
 
-                    // 4. ANIMATIE BUTON (Efect de Glow)
+                    // 4. Animație Buton
                     int btnAlpha = m.enabled ? 0x99 : (isHovered ? 0x66 : 0x44);
                     int btnColor = (btnAlpha << 24) | (m.enabled ? (rainbow & 0x00FFFFFF) : 0x222222);
                     
                     context.fill(x, y, x + 100, y + 13, btnColor);
 
-                    // Textul Modulului
                     String label = (bindingModule == m) ? "§bBINDING..." : (m.enabled ? "§f" + m.name : "§7" + m.name);
                     context.drawTextWithShadow(this.textRenderer, label, x + 4, y + 3, 0xFFFFFF);
 
@@ -81,19 +82,19 @@ public class ClickGuiScreen extends Screen {
             x += 115;
         }
 
-        // 5. TOOLTIP BAR (Jos pe ecran)
+        // 5. Tooltip Bar
         context.fill(0, this.height - 20, this.width, this.height, 0xCC050505);
         context.fill(0, this.height - 21, this.width, this.height - 20, rainbow);
         context.drawTextWithShadow(this.textRenderer, tooltip, 10, this.height - 14, 0xFFFFFF);
 
-        // 6. ARRAYLIST HUD (Module active)
         renderHUD(context);
     }
 
     private void renderHUD(DrawContext context) {
         int y = 5;
+        // Folosim metoda noua din ModuleManager
         for (Module m : ModuleManager.getEnabledModules()) {
-            if (!m.name.contains("_")) { // Nu afișăm modulele generate în HUD
+            if (!m.name.contains("_")) { 
                 int color = Color.HSBtoRGB((System.currentTimeMillis() + (y * 120)) % 6000 / 6000f, 0.7f, 1f);
                 context.drawTextWithShadow(this.textRenderer, m.name.toLowerCase(), this.width - this.textRenderer.getWidth(m.name) - 5, y, color);
                 y += 10;
