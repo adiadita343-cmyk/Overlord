@@ -1,4 +1,4 @@
-package net.overlord.com.adiadita343.module;
+package net.overlord.adiadita343.module;
 
 import net.minecraft.client.MinecraftClient;
 
