@@ -1,4 +1,4 @@
-package com.adiadita343.module;
+package net.overlord.com.adiadita343.module;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -9,55 +9,57 @@ import net.minecraft.screen.slot.SlotActionType;
 public class CombatRegistry {
 
     public static void register() {
-        registerAuras();
-        registerAutoTotems();
-        registerCrystalAndAnchor();
-        registerMiscCombat();
-    }
-
-    private static void registerAuras() {
-        String c = "COMBAT";
-        // Toate tipurile de Aura și Aim din lista ta
-        String[] mods = {
-            "Aura", "Killaura", "Triggerbot", "BowAimbot", "Aimassist", "Clicker", "Reach", "Hitbox", 
-            "Criticals", "Fastbow", "Multiaura", "AuraAura", "Velocity", "AntiKnockback", 
-            "SuperKnockback", "AutoWeapon", "AutoSword", "AutoBow", "AutoRod", "AutoSoup", 
-            "Blink", "AuraSwitch", "HitDelay", "AttackSpeed", "FastHit", "Regen", "AntiBot", 
-            "TargetStrafe", "NoCooldown", "AutoClicker", "AutoSwordSwitch", "AutoGapple", 
-            "AutoPearl", "TickShift", "Hitreg", "BowSpam", "LegitAura", "MultiAura", 
-            "SwitchAura", "PriorityAura", "TPAura", "InfiniteAura"
+        // --- GRUPUL 1: AURAS (Toate tipurile de bataie) ---
+        String[] auras = {
+            "KillAura", "TriggerBot", "AimAssist", "AutoClicker", "MultiAura", 
+            "TPAura", "InfiniteAura", "LegitAura", "SwitchAura", "AuraAura", 
+            "Reach", "Criticals", "Velocity", "AntiKnockback", "SuperKnockback"
         };
 
-        for (String name : mods) {
-            ModuleManager.addModule(new Module(name, c) {
+        for (String s : auras) {
+            ModuleManager.addModule(new Module(s, "COMBAT") {
                 @Override
                 public void onTick() {
-                    // Logica de atac universală pentru Aura
-                    for (Entity target : mc.world.getEntities()) {
-                        if (target instanceof PlayerEntity && target != mc.player && target.isAlive()) {
-                            if (mc.player.distanceTo(target) < 4.5) {
-                                mc.interactionManager.attackEntity(mc.player, target);
-                                mc.player.swingHand(Hand.MAIN_HAND);
-                                break;
-                            }
+                    // Logica de atac universala
+                    for (Entity e : mc.world.getEntities()) {
+                        if (e instanceof PlayerEntity && e != mc.player && e.isAlive() && mc.player.distanceTo(e) < 4.5) {
+                            mc.interactionManager.attackEntity(mc.player, e);
+                            mc.player.swingHand(Hand.MAIN_HAND);
                         }
                     }
                 }
             });
         }
-    }
 
-    private static void registerAutoTotems() {
-        String c = "COMBAT";
-        
-        // Modulul Principal AutoTotem (Undetectable)
-        ModuleManager.addModule(new Module("AutoTotem", c) {
+        // --- GRUPUL 2: CRYSTAL & ANCHOR (Explozii) ---
+        String[] explosives = {
+            "CrystalAura", "AutoCrystal", "AnchorAura", "AutoAnchor", "AutoCev", 
+            "CevBreaker", "BedAura", "PistonAura", "AutoTrap", "Surround"
+        };
+
+        for (String s : explosives) {
+            ModuleManager.addModule(new Module(s, "COMBAT") {
+                @Override
+                public void onTick() {
+                    // Aici vine logica grea de Crystal (va fi adaugata pe parcurs)
+                }
+            });
+        }
+
+        // --- GRUPUL 3: AUTO TOTEM (Sistemul tau Undetectable) ---
+        ModuleManager.addModule(new Module("AutoTotem", "COMBAT") {
             @Override
             public void onTick() {
+                // Daca nu ai totem in mana stanga
                 if (mc.player.getOffHandStack().getItem() == Items.TOTEM_OF_UNDYING) return;
+
+                // Cauta in tot inventarul
                 for (int i = 0; i < 45; i++) {
                     if (mc.player.getInventory().getStack(i).getItem() == Items.TOTEM_OF_UNDYING) {
+                        // Fix slot pentru Fabric
                         int slot = i < 9 ? i + 36 : i;
+                        
+                        // Simularea click-urilor "Undetectable"
                         mc.interactionManager.clickSlot(mc.player.currentScreenHandler.syncId, slot, 0, SlotActionType.PICKUP, mc.player);
                         mc.interactionManager.clickSlot(mc.player.currentScreenHandler.syncId, 45, 0, SlotActionType.PICKUP, mc.player);
                         mc.interactionManager.clickSlot(mc.player.currentScreenHandler.syncId, slot, 0, SlotActionType.PICKUP, mc.player);
@@ -67,55 +69,23 @@ public class CombatRegistry {
             }
         });
 
-        // Toate celelalte variante de AutoTotem (Potion, Strict, etc.)
-        String[] types = {"Totemless", "Offhand", "Mainhand", "Strict", "Switch", "Delay", "Silent", "Safety", "FailSafe", "NoLag", "Armor", "Sword", "Shield"};
-        for (String t : types) {
-            ModuleManager.addModule(new Module("AutoTotem_" + t, c) {
-                @Override public void onTick() { /* Logica specifica */ }
-            });
-        }
+        // --- GRUPUL 4: MISC COMBAT (Utilitati) ---
+        String[] miscCombat = {
+            "AutoGapple", "AutoPot", "AutoSoup", "AutoWeapon", "FastBow", 
+            "BowAimbot", "Burrow", "SelfTrap", "HoleFiller", "AntiBot"
+        };
 
-        // Variantele de Potiuni (Health, Strength, etc. nivelele 1-6)
-        String[] pots = {"Health", "Strength", "Speed", "FireRes", "Regen", "Absorption", "Invisibility", "Luck"};
-        for (String p : pots) {
-            for (int i = 1; i <= 6; i++) {
-                ModuleManager.addModule(new Module("AutoTotem_" + p + i + "Potion", c) {
-                    @Override public void onTick() { /* Logica specifica per potiune */ }
-                });
-            }
-        }
-    }
-
-    private static void registerCrystalAndAnchor() {
-        String c = "COMBAT";
-        // CrystalAura Elite
-        String[] cr = {"Sync", "Place", "Break", "Delay", "MultiPlace", "InstantBreak", "Raytrace", "WallRange", "Rotate", "SilentRotate", "PredictBreak", "DamageCalc", "AntiSurround", "AntiBurrow", "AntiCev", "AdaptiveDelay", "PingSync", "Bypass", "Threaded", "PopPredict", "TotemBreaker", "DoublePop", "Burst", "Spam", "LegitMode", "StrictMode"};
-        for (String s : cr) {
-            ModuleManager.addModule(new Module("CrystalAura_" + s, c) {
-                @Override public void onTick() { /* Logica Crystal */ }
-            });
-        }
-
-        // AnchorAura
-        String[] an = {"Aura", "AutoAnchor", "AutoCev", "AnchorPredict", "AnchorCharge", "AnchorBreaker"};
-        for (String s : an) {
-            ModuleManager.addModule(new Module(s, c) {
-                @Override public void onTick() { /* Logica Anchor */ }
-            });
-        }
-    }
-
-    private static void registerMiscCombat() {
-        String c = "COMBAT";
-        String[] misc = {"Surround", "SelfTrap", "AutoTrap", "HoleFiller", "Burrow", "Offhand", "NoSlowCombat", "KeepSprint", "AntiWeakness", "AutoWeb", "WebAura", "AntiCrystal", "AutoLog", "FastEat", "AutoHeal", "AutoGapple"};
-        for (String s : misc) {
-            ModuleManager.addModule(new Module(s, c) {
-                @Override public void onTick() {
-                    if (name.equals("AutoLog") && mc.player.getHealth() < 5) {
-                        mc.world.disconnect(); // Exemplu de logica
+        for (String s : miscCombat) {
+            ModuleManager.addModule(new Module(s, "COMBAT") {
+                @Override
+                public void onTick() {
+                    if (name.equals("AutoGapple") && mc.player.getHealth() < 15) {
+                        // Logica mancat mar
                     }
                 }
             });
         }
+        
+        System.out.println("[Overlord] Combat Registry a injectat " + auras.length + explosives.length + miscCombat.length + " module!");
     }
 }
