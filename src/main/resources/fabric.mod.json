@@ -1,28 +1,30 @@
 {
   "schemaVersion": 1,
   "id": "overlord",
+  "name": "Overlord Client",
   "version": "1.0.0",
-  "name": "Overlord Mod",
-  "description": "Un mod epic creat de adiadita343!",
+  "description": "Premium Meteor-Style Minecraft Utility Mod",
   "authors": [
-    "adiadita343-cmyk"
+    "adiadita343"
   ],
   "contact": {
-    "homepage": "https://github.com/adiadita343-cmyk/Overlord",
-    "sources": "https://github.com/adiadita343-cmyk/Overlord",
-    "discord": "https://discord.gg/hHq6U6Jm"
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/adiadita343/overlord"
   },
   "license": "MIT",
   "icon": "assets/overlord/icon.png",
   "environment": "*",
   "entrypoints": {
-    "main": [
-      "com.adiadita343.OverlordMod"
+    "client": [
+      "com.adiadita343.overlord.OverlordClient"
     ]
   },
+  "mixins": [
+    "overlord.mixins.json"
+  ],
   "depends": {
-    "fabricloader": ">=0.15.11",
-    "minecraft": ">=1.21.1",
-    "java": ">=21"
+    "fabricloader": ">=0.14.22",
+    "minecraft": "~1.20.1",
+    "java": ">=17"
   }
 }
