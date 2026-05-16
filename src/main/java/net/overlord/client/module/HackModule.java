@@ -1,31 +1,24 @@
-package com.adiadita343;
+package net.overlord.client.module;
 
-// HackModule "moștenește" tot ce are Module
 public class HackModule extends Module {
-
+    
     public HackModule(String name, String category) {
-        super(name, category); // Trimite numele și categoria către fișierul Module.java
+        super(name, category);
     }
 
     @Override
-    public void toggle() {
-        super.toggle(); // Face toggle-ul normal
-        
-        // Adăugăm ceva extra: un mesaj în consolă/log-uri
-        if (this.enabled) {
-            System.out.println("[Overlord] " + this.name + " a fost ACTIVAT!");
-            onEnable();
-        } else {
-            System.out.println("[Overlord] " + this.name + " a fost DEZACTIVAT!");
-            onDisable();
-        }
+    public void onTick() {
+        // Aici poți pune logică generală dacă vrei, 
+        // dar majoritatea logicii stă în Registries.
     }
 
+    @Override
     public void onEnable() {
-        // Aici vei pune cod special pentru când pornești hack-ul
+        System.out.println("[Overlord] " + this.name + " ACTIVAT!");
     }
 
+    @Override
     public void onDisable() {
-        // Aici vei pune cod special pentru când îl oprești
+        System.out.println("[Overlord] " + this.name + " DEZACTIVAT!");
     }
 }
