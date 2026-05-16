@@ -1,4 +1,4 @@
-package com.adiadita343.module; // Verifică dacă pachetul e corect aici!
+package net.overlord.client.module;
 
 import net.minecraft.client.MinecraftClient;
 
@@ -6,6 +6,8 @@ public abstract class Module {
     public String name;
     public String category;
     public boolean enabled;
+    public int keyCode; // Necesar pentru ClickGUI keybinds
+
     protected static final MinecraftClient mc = MinecraftClient.getInstance();
 
     public Module(String name, String category) {
@@ -22,7 +24,5 @@ public abstract class Module {
 
     public void onEnable() {}
     public void onDisable() {}
-    
-    // Această metodă va fi chemată DOAR când modulul e pornit
     public abstract void onTick();
 }
