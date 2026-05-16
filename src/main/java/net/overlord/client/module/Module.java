@@ -1,4 +1,4 @@
-package net.overlord.client.module;
+package net.overlord.com.adiadita343.module;
 
 import net.minecraft.client.MinecraftClient;
 
@@ -6,7 +6,7 @@ public abstract class Module {
     public String name;
     public String category;
     public boolean enabled;
-    public int keyCode; // Necesar pentru ClickGUI keybinds
+    public int keyCode;
 
     protected static final MinecraftClient mc = MinecraftClient.getInstance();
 
