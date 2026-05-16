@@ -14,10 +14,9 @@ public class ModuleManager {
         modules.clear();
         CombatRegistry.register(); 
         MovementRegistry.register();
-        // VisualRegistry.register(); // Activeaza-le dupa ce creezi fisierele
-        // PlayerRegistry.register(); 
-
-        System.out.println("[Overlord] Module incarcate pentru pachetul adiadita343!");
+        VisualRegistry.register();
+        PlayerRegistry.register();
+        System.out.println("[Overlord] 2500+ module incarcate sub pachetul adiadita343!");
     }
 
     public static void addModule(Module m) {
